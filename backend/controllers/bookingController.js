@@ -57,6 +57,9 @@ const confirmBooking = async (req, res) => {
 
     await session.commitTransaction();
     session.endSession();
+    // 👉 THE FIX: Broadcast to all users that the grid has changed!
+    const io = req.app.get("io");
+    io.emit("seatsUpdated", { eventId: reservation.eventId });
 
     return res.status(200).json({
       success: true,
